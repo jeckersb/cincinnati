@@ -290,11 +290,11 @@ impl Graph {
         self.dag
             .node_references()
             .filter(|nr| {
-                let v: &str = &nr.weight().version().to_string();
+                let v: &str = nr.weight().version();
                 if v == version {
                     true
                 } else {
-                    let version_unsuffixed: Vec<&str> = v.split("+").collect();
+                    let version_unsuffixed: Vec<&str> = v.split('+').collect();
                     version_unsuffixed[0] == version //ignore the architecture(eg +amd64) attached to version
                 }
             })

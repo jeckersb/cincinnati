@@ -78,10 +78,8 @@ impl MergeOptions<Option<ServiceOptions>> for AppSettings {
             assign_if_some!(self.backlog, service.backlog);
             assign_if_some!(self.max_connections, service.max_connections);
             assign_if_some!(self.max_connection_rate, service.max_connection_rate);
-            self.keep_alive = match service.keep_alive {
-                Some(x) => Some(Duration::new(x, 0)),
-                None => None,
-            };
+            self.keep_alive = service.keep_alive.map(|x| Duration::new(x, 0));
+
             if let Some(duration) = service.client_timeout {
                 self.client_timeout = Duration::new(duration, 0);
             }

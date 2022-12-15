@@ -65,7 +65,7 @@ pub mod cache {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Default, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize)]
 pub struct Registry {
     pub(crate) scheme: String,
     pub(crate) insecure: bool,
@@ -197,7 +197,7 @@ pub fn read_credentials(
     registry_host: &str,
 ) -> Result<(Option<String>, Option<String>), Error> {
     credentials_path.map_or(Ok((None, None)), |path| {
-        let file = File::open(&path).context(format!("could not open '{:?}'", path))?;
+        let file = File::open(path).context(format!("could not open '{:?}'", path))?;
 
         dkregistry::get_credentials(file, registry_host).map_err(|e| format_err!("{}", e))
     })
@@ -254,7 +254,7 @@ async fn get_manifest_layers(
 ) -> Result<(Option<String>, String, Vec<String>), Error> {
     trace!("[{}] Fetching release", tag);
     let (tag, manifest, manifestref) =
-        get_manifest_and_ref(tag, repo.to_owned(), &registry_client).await?;
+        get_manifest_and_ref(tag, repo.to_owned(), registry_client).await?;
 
     // Try to read the architecture from the manifest
     let arch = match manifest.architectures() {
@@ -320,7 +320,7 @@ pub async fn fetch_releases(
 
         async move {
             let (arch, manifestref, mut layers_digests) =
-                get_manifest_layers(tag.to_owned(), &repo, &registry_client).await?;
+                get_manifest_layers(tag.to_owned(), repo, &registry_client).await?;
 
             // if the image is multi arch, we will have to get one image from the manifest list and
             // use its metadata, because manifest lists are just collections of manifests and don't
@@ -329,14 +329,13 @@ pub async fn fetch_releases(
                 let digest = layers_digests
                     .first()
                     .map(std::string::ToString::to_string)
-                    .expect(
-                        format!("no images referenced in ManifestList ref:{}", manifestref)
-                            .as_str(),
-                    );
+                    .unwrap_or_else(|| {
+                        panic!("no images referenced in ManifestList ref:{}", manifestref)
+                    });
                 // TODO: destructured assignments are unstable in current rust, after updating rust
                 // change this to (_,_,layers_digests) and remove separate assignment from below.
                 let (_ml_arch, _ml_manifestref, ml_layers_digests) =
-                    get_manifest_layers(digest, &repo, &registry_client).await?;
+                    get_manifest_layers(digest, repo, &registry_client).await?;
                 layers_digests = ml_layers_digests;
             }
 

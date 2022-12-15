@@ -24,7 +24,7 @@ impl QuerySuccess {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Eq)]
 pub struct QueryError {
     data: serde_json::Value,
     #[serde(rename = "errorType")]

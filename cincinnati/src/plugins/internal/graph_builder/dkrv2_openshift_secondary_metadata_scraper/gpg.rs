@@ -62,7 +62,7 @@ pub fn load_public_keys(public_keys_dir: &Path) -> Fallible<Keyring> {
 /// Fetch signature contents by building a URL for signature store
 pub async fn fetch_url(http_client: &Client, base_url: &Url, sha: &str, i: u64) -> Fallible<Bytes> {
     let url = base_url
-        .join(format!("{}/", sha.replace(":", "=")).as_str())?
+        .join(format!("{}/", sha.replace(':', "=")).as_str())?
         .join(format!("signature-{}", i).as_str())?;
     let res = http_client
         .get(url.clone())

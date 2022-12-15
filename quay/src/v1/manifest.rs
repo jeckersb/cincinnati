@@ -35,7 +35,7 @@ pub(crate) struct Labels {
 }
 
 /// Tag label.
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
 pub struct Label {
     /// Label key.
     pub key: String,

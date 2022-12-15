@@ -193,9 +193,6 @@ pub fn run(settings: &config::AppSettings, state: &State) -> ! {
     let mut nodes_count: i64;
 
     loop {
-        // Store scrape duration value. It would be used for initial scrape gauge or scrape histogram
-        let scrape_value: f64;
-
         if first_iteration {
             *state.live.write() = true;
             first_iteration = false;
@@ -241,8 +238,8 @@ pub fn run(settings: &config::AppSettings, state: &State) -> ! {
             nodes_count = internal_io.graph.releases_count() as i64;
         }
 
-        // Record scrape duration
-        scrape_value = scrape_timer.stop_and_discard();
+        // Store scrape duration value. It would be used for initial scrape gauge or scrape histogram
+        let scrape_value: f64 = scrape_timer.stop_and_discard();
 
         if first_success {
             *state.ready.write() = true;
@@ -252,7 +249,7 @@ pub fn run(settings: &config::AppSettings, state: &State) -> ! {
             UPSTREAM_SCRAPES_DURATION.observe(scrape_value);
         }
 
-        GRAPH_LAST_SUCCESSFUL_REFRESH.set(chrono::Utc::now().timestamp() as i64);
+        GRAPH_LAST_SUCCESSFUL_REFRESH.set(chrono::Utc::now().timestamp());
 
         GRAPH_FINAL_RELEASES.set(nodes_count);
         debug!("graph update completed, {} valid releases", nodes_count);

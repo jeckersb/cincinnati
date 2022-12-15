@@ -74,7 +74,7 @@ impl ArchFilterPlugin {
     /// Remove the arch identifier from the conditional edges.
     pub fn rm_conditional_edges_arch_identifier(
         &self,
-        vce: &mut Vec<cincinnati::ConditionalEdge>,
+        vce: &mut [cincinnati::ConditionalEdge],
         arch: String,
     ) -> Fallible<()> {
         vce.iter_mut()

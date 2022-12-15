@@ -153,8 +153,7 @@ impl AppSettings {
                 self.fetch_concurrency,
                 self.credentials_path
                     .as_ref()
-                    .map(|pathbuf| pathbuf.to_str())
-                    .flatten()
+                    .and_then(|pathbuf| pathbuf.to_str())
                     .map(|path| format!("\ncredentials_path = {:?}", path))
                     .unwrap_or_default()
             ))?)?,

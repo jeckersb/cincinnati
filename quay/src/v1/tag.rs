@@ -20,7 +20,7 @@ pub(crate) struct PaginatedTags {
 }
 
 /// Repository tag.
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
 pub struct Tag {
     /// Manifest digest, in `type:digest` format.
     pub manifest_digest: Option<String>,

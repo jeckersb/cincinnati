@@ -40,8 +40,7 @@ pub fn new_registry(prefix: Option<String>) -> Fallible<Registry> {
     Registry::new_custom(prefix.clone(), None).map_err(|e| {
         format_err!(format!(
             "could not create a custom regostry with prefix {:?}: {}",
-            prefix,
-            e.to_string()
+            prefix, e
         ))
     })
 }

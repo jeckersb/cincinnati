@@ -122,7 +122,7 @@ impl DkrV2OpenshiftSecondaryMetadataScraperSettings {
                 "invalid signature base url",
             );
             ensure!(
-                !settings.public_keys_path.is_none(),
+                settings.public_keys_path.is_some(),
                 "empty public keys path",
             );
         }
@@ -355,7 +355,7 @@ impl DkrV2OpenshiftSecondaryMetadataScraperPlugin {
             .try_for_each(|entry_result| -> Fallible<()> {
                 let entry = entry_result?;
                 let path = entry.path();
-                let path_stripped = path.strip_prefix(&data_dir)?;
+                let path_stripped = path.strip_prefix(data_dir)?;
                 if let Some(path_stripped_str) = path_stripped.to_str() {
                     if !path_stripped_str.is_empty()
                         && !self

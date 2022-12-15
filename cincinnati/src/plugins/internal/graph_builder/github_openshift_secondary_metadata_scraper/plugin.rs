@@ -168,20 +168,20 @@ impl GithubOpenshiftSecondaryMetadataScraperPlugin {
             )
             .context("Parsing output allowlist strings as regex")?;
 
-        let oauth_token = (&settings.oauth_token_path)
+        let oauth_token = settings
+            .oauth_token_path
             .clone()
             .map(|path| {
                 std::fs::read_to_string(&path)
                     .context(format!("Reading Oauth token from {:?}", &path))
             })
             .transpose()?
-            .map(|token| {
+            .and_then(|token| {
                 token
                     .lines()
                     .next()
                     .map(|first_line| first_line.trim().to_owned())
-            })
-            .flatten();
+            });
 
         // Create the output directory if it doesn't exist
         std::fs::create_dir_all(&settings.output_directory).context(format!(
@@ -293,7 +293,7 @@ impl GithubOpenshiftSecondaryMetadataScraperPlugin {
             None => true,
         };
 
-        (*state).commit_wanted = Some(commit_wanted);
+        state.commit_wanted = Some(commit_wanted);
 
         Ok(should_update)
     }

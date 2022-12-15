@@ -23,7 +23,7 @@ use semver::Version;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Release {
     pub source: String,
     pub metadata: Metadata,
@@ -39,7 +39,7 @@ impl From<Release> for cincinnati::Release {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Metadata {
     pub kind: MetadataKind,
     pub version: Version,
@@ -65,7 +65,7 @@ impl fmt::Display for Metadata {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum MetadataKind {
     #[serde(rename = "cincinnati-metadata-v0")]
     V0,

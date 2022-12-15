@@ -143,19 +143,19 @@ async fn main() -> Result<(), Error> {
             .app_data(actix_web::web::Data::<AppState>::new(main_state.clone()))
             .service(
                 // keeping this for backward compatibility
-                actix_web::web::resource(&format!("{}/v1/graph", app_prefix))
+                actix_web::web::resource(format!("{}/v1/graph", app_prefix))
                     .route(actix_web::web::get().to(graph::index)),
             )
             .service(
-                actix_web::web::resource(&format!("{}/graph", app_prefix))
+                actix_web::web::resource(format!("{}/graph", app_prefix))
                     .route(actix_web::web::get().to(graph::index)),
             )
             .service(
-                actix_web::web::resource(&format!("{}/openapi", app_prefix))
+                actix_web::web::resource(format!("{}/openapi", app_prefix))
                     .route(actix_web::web::get().to(openapi::index)),
             )
             .service(
-                actix_web::web::resource(&format!("{}/v1/openapi", app_prefix))
+                actix_web::web::resource(format!("{}/v1/openapi", app_prefix))
                     .route(actix_web::web::get().to(openapi::index)),
             )
             .default_service(actix_web::web::route().to(default_response))
@@ -185,7 +185,7 @@ async fn main() -> Result<(), Error> {
     debug!("waiting for the application to be ready");
 
     // wait for the application to be initialized and the cache refreshed.
-    while *state.ready.read() == false {
+    while !(*state.ready.read()) {
         thread::sleep(Duration::new(10, 0));
         let resp = graph::index(
             http_req.clone(),
